@@ -34,7 +34,7 @@ const CreatePost = ({ open, setOpen }) => {
       })
       if (res.data.success) {      
         dispatch(setPost([res.data.post,...posts]))
-        toast.success(res.data.message)
+        toast.success(res.data.message,{duration:2000,})
         setOpen(false)
         setFile("");
         setCaption("");

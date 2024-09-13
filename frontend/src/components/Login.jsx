@@ -38,7 +38,7 @@ const Login = () => {
             if (res.data.success) {
                 dispatch(setAuthUser(res.data.user))
                 navigate('/')
-                toast.success(res.data.message);
+                toast.success(res.data.message,{duration:2000,});
                 setInput({
                     email: '',
                     password: ''

@@ -46,7 +46,7 @@ const CommentDialog = ({ open, setOpen }) => {
 
                 const updatedPostData = posts.map(postData => postData._id === selectedPost._id ? { ...postData, comments: updatedCommentData } : postData)
                 dispatch(setPost(updatedPostData))
-                toast.success(res.data.message);
+                toast.success(res.data.message,{duration:2000,});
                 setText("");
             }
         } catch (error) {

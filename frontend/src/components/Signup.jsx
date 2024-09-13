@@ -11,6 +11,7 @@ import { IoLogoFacebook } from "react-icons/io";
 const Signup = () => {
     const [input, setInput] = useState({
         username: '',
+        fullname:'',
         email: '',
         password: ''
     });
@@ -33,7 +34,7 @@ const Signup = () => {
             });
             if (res.data.success) {
                 navigate("/login")
-                toast.success(res.data.message);
+                toast.success(res.data.message,{duration:2000,});
                 setInput({
                     username: '',
                     fullname:'',

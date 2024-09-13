@@ -9,7 +9,7 @@ import { Post } from "../models/post.model.js";
 export const register = async (req, res) => {
     try {
         const { username,fullname, email, password,  } = req.body;
-        if (!username || !email || !password) {
+        if (!username || !fullname || !email || !password) {
             return res.status(401).json({
                 message: 'required all fields',
                 success: false

@@ -2,7 +2,6 @@ import React from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 
 const Comment = ({singleComment}) => {
-    console.log(singleComment)
   return (
     <div>
       <div className='flex gap-3 justify-start mb-3'>

@@ -8,7 +8,7 @@ const Home = () => {
   const{allPosts,loading,error}=useGetAllPost()
   return (
     <div className='flex'>
-      <div className='flex-grow'>
+      <div className='flex-grow overflow-x-hidden'>
         <Feed />
         <Outlet />
       </div>

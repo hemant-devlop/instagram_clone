@@ -61,7 +61,7 @@ const Post = ({ post }) => {
                 setComment(updatedCommentData)
                 const updatedPostData = posts.map(postData => postData._id === post._id ? { ...postData, comments: updatedCommentData } : postData)
                 dispatch(setPost(updatedPostData))
-                toast.success(res.data.message);
+                toast.success(res.data.message,{duration:2000,});
                 setText("");
             }
         } catch (error) {
@@ -86,7 +86,7 @@ const Post = ({ post }) => {
                 } : postdata);
                 dispatch(setPost(updatepostData));
 
-                toast.success(res.data.message);
+                toast.success(res.data.message,{duration:2000,});
             }
 
         } catch (error) {
@@ -100,7 +100,7 @@ const Post = ({ post }) => {
             if (res.data.success) {
                 const updatedPosts = posts.filter(postItem => postItem._id !== post._id);
                 dispatch(setPost(updatedPosts));
-                toast.success(res.data.message);
+                toast.success(res.data.message,{duration:2000,});
             }
         } catch (error) {
             console.log(error)
