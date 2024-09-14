@@ -14,6 +14,7 @@ pids/
 
 # Environment variables
 .env
+.txt
 .env.*.local
 
 # Production build
