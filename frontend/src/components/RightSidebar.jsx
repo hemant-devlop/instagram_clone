@@ -8,7 +8,7 @@ const RightSidebar = () => {
   const { user } = useSelector(store => store.auth)
   return (
     <div className='w-[23%] my-10 pr-4 hidden lg:block'>
-      <div className='flex items-center gap-2 cursor-pointer'>
+      <div className='flex items-center gap-2 cursor-pointer '>
         <Link to={`/profile/${user?._id}`}>
           <Avatar>
             <AvatarImage src={user?.profilePicture} alt="post" />
@@ -16,8 +16,8 @@ const RightSidebar = () => {
           </Avatar>
         </Link>
         <Link to={`/profile/${user?._id}`} >
-          <h1 className='font-semibold text-sm'>{user?.username}</h1>
-          <span className='text-gray-600 text-sm'>{user?.bio || 'bio here...'}</span>
+         <h1 className='font-semibold text-sm'>{user?.username}</h1>
+         <span className='text-gray-600 text-sm'>{user?.fullname}</span>
         </Link>
       </div>
       <SuggestedUsers/>

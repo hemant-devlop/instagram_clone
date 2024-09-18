@@ -67,12 +67,14 @@ const LeftSideBar = () => {
             navigate(`/profile/${user?._id}`)
         }else if(textType === "Home"){
             navigate('/')
+        }else if(textType === ""){
+            navigate('/chat')
         }
-
+ 
     }
 
     return (
-        <div className='flex flex-col fixed bottom-0 sm:top-0 bg-white z-40 left-0 sm:px-4 pr-2 border-r border-gray-300  h-14 w-screen sm:min-w-[80px] sm:w-[80px] lg:w-[16%] sm:h-screen '>
+        <div className='flex flex-col fixed bottom-0 sm:top-0 bg-white sm:bg-transparent z-40 left-0 sm:px-4 pr-2 border-r border-gray-300  h-14 w-screen sm:min-w-[80px] sm:w-[80px] lg:w-[16%] sm:h-screen '>
             <div className='hidden sm:block my-7 w-full sm:w-auto mx-auto'>
                 <Link to='/'>
                     <span className='hidden sm:block lg:hidden p-3'><FaInstagram size={'25px'} /></span>

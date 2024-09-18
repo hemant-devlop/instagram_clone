@@ -1,30 +1,35 @@
 import useGetUserProfile from '@/hooks/useGetUserProfile';
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
-import { IoMdSettings } from "react-icons/io";
-import { AtSign, Heart, MessageCircle } from 'lucide-react';
+import { AtSign, Ellipsis, Heart, Loader2, MessageCircle } from 'lucide-react';
 import { Badge } from './ui/badge';
 
 const Profile = () => {
   const params = useParams();
   const userId = params.id
-  useGetUserProfile(userId);
-  const { userProfile } = useSelector(store => store.auth);
+  const {loading,error}=useGetUserProfile(userId);
+  const { userProfile,user } = useSelector(store => store.auth);
   const [activeTab, setActiveTab] = useState("posts");
+
+
   const handleTabChange = (tab) => {
     setActiveTab(tab)
   }
 
-  const displayedPost = activeTab === "posts" ? userProfile.posts : userProfile.bookmarks;
+  const displayedPost = activeTab === "posts" ? userProfile?.posts : userProfile.bookmarks;
 
 
-  const loginUser = true
+  const loginUser = user?._id===userProfile?._id
   const isfollow = true
   return (<>
-    <div className='flex max-w-5xl justify-center mx-auto md:pl-20 lg:pl-40'>
+    {loading?(<div className="text-center mt-5">
+      <Button className="rounded-lg my-4">
+                    <Loader2 className='mr-2 h-4 w-4 animate-spin' />please wait
+                </Button>
+                </div>):(<div className='flex max-w-5xl justify-center mx-auto md:pl-20 lg:pl-40'>
       <div className='flex flex-col sm:gap-20 p-8'>
         <div className='grid grid-cols-1 sm:grid-cols-2 gap-6'>
           <section className="flex items-center justify-center">
@@ -35,14 +40,14 @@ const Profile = () => {
           </section>
           <section>
             <div className='flex flex-col gap-5'>
-              <div className='flex flex-col sm:flex-row items-center gap-2 order-1'>
+              <div className='flex flex-col sm:flex-row items-center gap-2 order-1 overflow-x-hidden'>
                 <span className='text-lg'>{userProfile?.username}</span>
                 {
                   loginUser ? (
-                    <div className="flex flex-wrap gap-2">
-                      <Button variant="secondary" className="hover:bg-gray-200 h-8">edit profile</Button>
-                      <Button variant="secondary" className="hover:bg-gray-200 h-8">view archive</Button>
-                      {/* <Button variant="secondary" className="hover:bg-gray-200 h-8">ad tools</Button> */}
+                    <div className="flex gap-2">
+                    <Link to="/account/edit"><Button variant="secondary" className="hover:bg-gray-200 h-8 ">edit profile</Button></Link>
+                      <Button variant="secondary" className="hover:bg-gray-200 h-8 ">view archive</Button>
+                      <Button className="text-gray-600 text-md font-medium bg-transparent hover:bg-transparent hidden md:block p-0 "><Ellipsis/></Button>
                     </div>
                   ) : (
                     isfollow ? (
@@ -57,7 +62,7 @@ const Profile = () => {
                 }
               </div>
               <div className='flex items-center justify-around sm:justify-start gap-4 order-3 sm:order-2 border-t sm:border-none py-3 sm:py-1'>
-                <p className='text-center'><span className='font-semibold'>{userProfile?.posts.length}</span> posts</p>
+                <p className='text-center'><span className='font-semibold'>{userProfile?.posts?.length}</span> posts</p>
                 <p className='text-center cursor-pointer'><span className='font-semibold'>{userProfile?.followers.length}</span> followers</p>
                 <p className='text-center cursor-pointer'><span className='font-semibold'>{userProfile?.following.length}</span> following</p>
               </div>
@@ -80,7 +85,7 @@ const Profile = () => {
             <span className={`py-3 cursor-pointer`} >TAGS</span>
           </div>
           <div className='grid grid-cols-3 gap-2'>
-            {displayedPost.map(post =>
+            {displayedPost?.map(post =>
               <div key={post?._id} className='relative group cursor-pointer'>
                 <img src={post.image} alt="post_img" className='rounded w-full aspect-square object-cover' />
                 <div className='absolute rounded flex items-center justify-center bg-black bg-opacity-50 inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
@@ -99,7 +104,7 @@ const Profile = () => {
           </div>
         </div>
       </div>
-    </div>
+    </div>)}
    
 </>
   )

@@ -1,27 +1,30 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import authSlice from "./authSlice";
-import {
-    persistReducer,
-    FLUSH,
-    REHYDRATE,
-    PAUSE,
-    PERSIST,
-    PURGE,
-    REGISTER,
-} from 'redux-persist'
+import { persistReducer,FLUSH,REHYDRATE,PAUSE,PERSIST,PURGE,REGISTER } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
-import postSlice from "./postSlice";
 
+//slices
+import authSlice from "./authSlice";
+import postSlice from "./postSlice";
+import chatSlice from "./chatSlice";
+
+//persist configration
 const persistConfig = {
     key: 'root',
     version: 1,
     storage,
 }
+
+// Root reducer combining all slices
 const rootReducer=combineReducers({
     auth:authSlice,
-    post:postSlice
+    post:postSlice,
+    chat:chatSlice
 })
-const persistedReducer = persistReducer(persistConfig, rootReducer)
+
+//created persisted reducer
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+//store configuraion
 const store = configureStore({
     reducer: persistedReducer,
     middleware: (getDefaultMiddleware) =>

@@ -12,26 +12,29 @@ import axios from 'axios'
 import { setPost, setSelectedPost } from '@/redux/postSlice'
 import moment from 'moment'
 import { Badge } from './ui/badge'
+import { Link, useNavigate } from 'react-router-dom'
 
 const Post = ({ post }) => {
-    const {createdAt}=post;
+    const { createdAt } = post;
     const [text, setText] = useState('');
     const [open, setOpen] = useState(false)
     const { user } = useSelector(store => store.auth);
     const { posts } = useSelector(store => store.post);
+    const { selectedPost } = useSelector(store => store.post);
+    // console.log(selectedPost.author._id)
     const dispatch = useDispatch();
     const [liked, setLiked] = useState(post.likes.includes(user?._id) || false)
     const [active, setActive] = useState(false);
     const [postLike, setPostLike] = useState(post.likes.length);
     const [comment, setComment] = useState(post.comments)
-  
+    const navigate = useNavigate();
 
 
     const formatTimeAgo = (createdAt) => {
         const now = moment();
         const created = moment(createdAt);
         const duration = moment.duration(now.diff(created));
-    
+
         if (duration.asSeconds() < 60) {
             return `${Math.floor(duration.asSeconds())}s`; // seconds
         } else if (duration.asMinutes() < 60) {
@@ -46,7 +49,7 @@ const Post = ({ post }) => {
             return created.format('MMM D'); // fallback to a more readable format
         }
     };
-    const timeAgo=formatTimeAgo(createdAt);
+    const timeAgo = formatTimeAgo(createdAt);
     //post comment func
     const handleComments = async () => {
         try {
@@ -59,9 +62,9 @@ const Post = ({ post }) => {
             if (res.data.success) {
                 const updatedCommentData = [...comment, res.data.comment]
                 setComment(updatedCommentData)
-                const updatedPostData = posts.map(postData => postData._id === post._id ? { ...postData, comments: updatedCommentData } : postData)
+                const updatedPostData = posts?.map(postData => postData._id === post._id ? { ...postData, comments: updatedCommentData } : postData)
                 dispatch(setPost(updatedPostData))
-                toast.success(res.data.message,{duration:2000,});
+                toast.success(res.data.message, { duration: 2000, });
                 setText("");
             }
         } catch (error) {
@@ -81,12 +84,12 @@ const Post = ({ post }) => {
                 setLiked(!liked);
                 setActive(true)
 
-                const updatepostData = posts.map(postdata => postdata._id === post._id ? {
+                const updatepostData = posts?.map(postdata => postdata._id === post._id ? {
                     ...postdata, likes: liked ? postdata.likes.filter(id => id !== user._id) : [...postdata.likes, user._id]
                 } : postdata);
                 dispatch(setPost(updatepostData));
 
-                toast.success(res.data.message,{duration:2000,});
+                toast.success(res.data.message, { duration: 2000, });
             }
 
         } catch (error) {
@@ -100,7 +103,7 @@ const Post = ({ post }) => {
             if (res.data.success) {
                 const updatedPosts = posts.filter(postItem => postItem._id !== post._id);
                 dispatch(setPost(updatedPosts));
-                toast.success(res.data.message,{duration:2000,});
+                toast.success(res.data.message, { duration: 2000, });
             }
         } catch (error) {
             console.log(error)
@@ -119,14 +122,17 @@ const Post = ({ post }) => {
     return (
         <div className='my-8 w-full max-w-sm mx-auto'>
             <div className='flex items-center justify-between'>
-                <div className='flex items-center gap-2'>
+                <div className='flex  gap-3'>
                     <Avatar>
                         <AvatarImage src={post.author.profilePicture} alt="post" />
                         <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
-                    <h1 className='font-medium'>{post.author?.username}</h1> 
-                    <span className='text-sm'>{timeAgo}</span>
-                    {user?._id===post?.author._id && <Badge variant='secondary'>Author</Badge>}
+                    <div className='flex flex-col'>
+                        <h1 className='font-medium'>{post.author?.username}</h1>
+                        <span className='text-xs'>Original</span>
+                    </div>
+                    <span className='mt-1 text-sm hidden sm:block'>{timeAgo}</span>
+                    <span className='mt-1'>{user?._id === post?.author._id && <Badge variant='secondary'>Author</Badge>}</span>
                 </div>
                 <Dialog >
                     <DialogTrigger asChild>
@@ -147,7 +153,7 @@ const Post = ({ post }) => {
                 <div className='flex items-center gap-3'>
                     {liked ? <FaHeart onClick={likeUnlikePost} size={'22px'} className={active ? `cursor-pointer text-red-600 animate-heart-bounce` : 'cursor-pointer text-red-600 '} /> : <FaRegHeart onClick={likeUnlikePost} size={'22px'} className='cursor-pointer hover:text-gray-600' />}
 
-                    <MessageCircle onClick={ () => {
+                    <MessageCircle onClick={() => {
                         dispatch(setSelectedPost(post));
                         setOpen(true);
                     }
@@ -162,11 +168,11 @@ const Post = ({ post }) => {
                 <span className='font-medium mr-2'>{post.author?.username}</span>
                 {post.caption}
             </p>
-            { comment.length > 0 ?
-                <span onClick={() => { 
-            dispatch(setSelectedPost(post));
-            setOpen(true);
-             }} className='cursor-pointer text-sm text-gray-400'>View all {comment.length} comments</span>:''}
+            {comment.length > 0 ?
+                <span onClick={() => {
+                    dispatch(setSelectedPost(post));
+                    setOpen(true);
+                }} className='cursor-pointer text-sm text-gray-400'>View all {comment.length} comments</span> : ''}
             <CommentDialog open={open} setOpen={setOpen} />
             <div className='flex items-center justify-between mb-4'>
                 <input type="text"
@@ -176,7 +182,7 @@ const Post = ({ post }) => {
                     className='outline-none text-sm w-full'
                 />
                 {
-                    text && <span onClick={handleComments} className='text-[#3badf8] cursor-pointer'>post</span>
+                    text && <span onClick={handleComments} className='text-[#38affe] cursor-pointer'>post</span>
                 }
                 <span className='ms-2'><FiSmile /></span>
             </div>
