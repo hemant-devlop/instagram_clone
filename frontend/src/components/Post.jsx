@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { Dialog, DialogContent, DialogTrigger } from './ui/dialog'
 import { Bookmark, MessageCircle, MoreHorizontal, Send } from 'lucide-react'
@@ -13,6 +13,7 @@ import { setPost, setSelectedPost } from '@/redux/postSlice'
 import moment from 'moment'
 import { Badge } from './ui/badge'
 import { Link, useNavigate } from 'react-router-dom'
+import { debounce } from 'lodash'
 
 const Post = ({ post }) => {
     const { createdAt } = post;
@@ -50,11 +51,11 @@ const Post = ({ post }) => {
         }
     };
     const timeAgo = formatTimeAgo(createdAt);
-    //post comment func
-    const handleComments = async () => {
+
+    const debouncePostComment = useCallback(debounce(async (id,commentText) => {
         try {
-            const res = await axios.post(`http://localhost:8000/api/v1/post/${post._id}/comment`, { text }, {
-                Headers: {
+            const res = await axios.post(`http://localhost:8000/api/v1/post/${id}/comment`, { text:commentText }, {
+                headers: {
                     'content-type': 'application/json',
                 },
                 withCredentials: true
@@ -62,6 +63,7 @@ const Post = ({ post }) => {
             if (res.data.success) {
                 const updatedCommentData = [...comment, res.data.comment]
                 setComment(updatedCommentData)
+                
                 const updatedPostData = posts?.map(postData => postData._id === post._id ? { ...postData, comments: updatedCommentData } : postData)
                 dispatch(setPost(updatedPostData))
                 toast.success(res.data.message, { duration: 2000, });
@@ -70,6 +72,29 @@ const Post = ({ post }) => {
         } catch (error) {
             console.log(error)
         }
+    },1000),[comment, posts, post?._id, dispatch])
+    //post comment func
+    const handleComments = async () => {
+        // try {
+        //     const res = await axios.post(`http://localhost:8000/api/v1/post/${post._id}/comment`, { text }, {
+        //         headers: {
+        //             'content-type': 'application/json',
+        //         },
+        //         withCredentials: true
+        //     })
+        //     if (res.data.success) {
+        //         const updatedCommentData = [...comment, res.data.comment]
+        //         setComment(updatedCommentData)
+
+        //         const updatedPostData = posts?.map(postData => postData._id === post._id ? { ...postData, comments: updatedCommentData } : postData)
+        //         dispatch(setPost(updatedPostData))
+        //         toast.success(res.data.message, { duration: 2000, });
+        //         setText("");
+        //     }
+        // } catch (error) {
+        //     console.log(error)
+        // }
+        debouncePostComment(post._id,text)
     }
     //post like n unlike func
     const likeUnlikePost = async () => {
@@ -97,9 +122,9 @@ const Post = ({ post }) => {
         }
     }
     //delete post func
-    const deletePostHandler = async () => {
+    const debounceDeletePost = useCallback(debounce(async (id) => {
         try {
-            const res = await axios.delete(`http://localhost:8000/api/v1/post/delete/${post?._id}`, { withCredentials: true })
+            const res = await axios.delete(`http://localhost:8000/api/v1/post/delete/${id}`, { withCredentials: true })
             if (res.data.success) {
                 const updatedPosts = posts.filter(postItem => postItem._id !== post._id);
                 dispatch(setPost(updatedPosts));
@@ -109,6 +134,10 @@ const Post = ({ post }) => {
             console.log(error)
             toast.error(error.response.data.message);
         }
+    },1000),[posts,post?._id, dispatch])
+
+    const deletePostHandler = async () => {
+        debounceDeletePost(post?._id)
     }
     //adding comment in post func
     const changeEventHandler = (e) => {

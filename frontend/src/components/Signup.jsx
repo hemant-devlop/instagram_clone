@@ -75,7 +75,7 @@ const Signup = () => {
                     </div>
                     <div>
                         {/* <Label>Full Name</Label> */}
-                        <Input type="text" name="fullname" value={input.fullname} onChange={changeEventHandler} className="focus-visible:ring-transparent rounded bg-slate-50" placeholder="Fullname" />
+                        <Input type="text" name="fullname" value={input.fullname.charAt(0).toUpperCase() + input.fullname.slice(1)} onChange={changeEventHandler} className="focus-visible:ring-transparent rounded bg-slate-50" placeholder="Fullname" />
                     </div>
                     <div>
                         {/* <Label>Username</Label> */}

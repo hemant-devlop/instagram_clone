@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Dialog, DialogContent } from './ui/dialog'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { Link } from 'react-router-dom'
@@ -11,6 +11,7 @@ import axios from 'axios'
 import { toast } from 'sonner'
 import { setPost } from '@/redux/postSlice'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
+import { debounce } from 'lodash'
 
 const CommentDialog = ({ open, setOpen }) => {
     const [text, setText] = useState("");
@@ -31,11 +32,10 @@ const CommentDialog = ({ open, setOpen }) => {
             setText("");
         }
     }
-    //inside post comment hadler
-    const sendMessageHandler = async () => {
+    const debounceComment = useCallback(debounce(async (id,commentText) => {
         try {
-            const res = await axios.post(`http://localhost:8000/api/v1/post/${selectedPost._id}/comment`, { text }, {
-                Headers: {
+            const res = await axios.post(`http://localhost:8000/api/v1/post/${id}/comment`, { text:commentText }, {
+                headers: {
                     'content-type': 'application/json',
                 },
                 withCredentials: true
@@ -52,6 +52,12 @@ const CommentDialog = ({ open, setOpen }) => {
         } catch (error) {
             console.log(error)
         }
+    },1000),[comment, posts, selectedPost?._id, dispatch])
+    // console.log(debounceComment())
+
+    //inside post comment hadler
+    const sendMessageHandler = async () => {
+       debounceComment(selectedPost._id,text)
     }
     return (
         <Dialog open={open}>
