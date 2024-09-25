@@ -1,5 +1,5 @@
 
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from './ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
@@ -10,6 +10,17 @@ import useGetRTM from '@/hooks/useGetRTM'
 const Messages = ({ selectedUser }) => {
     const { messages } = useSelector(store => store.chat);
     const { user } = useSelector(store => store.auth);
+    const messageFocus = useRef(null);
+  
+    useEffect(() => {
+        if (messageFocus.current) {
+            messageFocus.current.scrollIntoView({ behavior: 'smooth' });
+        }
+
+       
+    }, [messages])
+
+
     useGetRTM();
     useGetAllMessages();
     return (
@@ -31,12 +42,13 @@ const Messages = ({ selectedUser }) => {
             </div>
             <div className='flex flex-col gap-4'>
                 {
-                    messages && messages?.map((msg, index) => <div key={index} className={`flex ${msg.senderId === user._id ? 'justify-end' : 'justify-start'}`}>
-                        <div className={`px-3 py-1 rounded-[18px] text-md ${msg.senderId===user._id?'bg-[#3797f0] text-white':'bg-[#efefef]'}`}> 
+                    messages && messages?.map((msg, index) => <div key={index} className={`flex ${msg.senderId === user._id ? 'justify-end' : 'justify-start'} `}>
+                        <div className={`px-3 py-1 rounded-[18px] text-md ${msg.senderId === user._id ? 'bg-[#3797f0] text-white' : 'bg-[#efefef]'} ${index === messages.length - 1 ? 'animate-fade' : ''}`}>
                             {msg?.message}
                         </div>
                     </div>)
                 }
+                <div ref={messageFocus} />
             </div>
         </div>
     )

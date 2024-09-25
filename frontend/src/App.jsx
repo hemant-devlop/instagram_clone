@@ -12,20 +12,25 @@ import { setOnlineUsers } from './redux/chatSlice'
 import { useEffect } from 'react'
 import ChatConversation from './components/ChatConversation'
 import ChatMenu from './components/ChatMenu'
+import { setLikeNotification } from './redux/rtnSlice'
+import ProtectedRoute from './components/ProtectedRoute'
+import PageNotFound from './components/PageNotFound'
+import StoryFeed from './components/StoryFeed'
 
 
 const browserRouter = createBrowserRouter([
   {
     path: '/',
-    element: <MainLayout />,
+    element: <ProtectedRoute><MainLayout /></ProtectedRoute> ,
     children: [
-      { path: '/', element: <Home /> },
-      { path: '/profile/:id', element: <Profile /> },
-      { path: '/account/edit', element: <EditProfile /> },
-      { path: '/chat',element: <ChatMenu />,children: [
-          { path: ':id', element: <ChatConversation /> } // Fixed path
+      { path: '/', element: <ProtectedRoute><Home /></ProtectedRoute> },
+      { path: '/profile/:id', element: <ProtectedRoute><Profile /></ProtectedRoute> },
+      { path: '/account/edit', element: <ProtectedRoute><EditProfile /></ProtectedRoute> },
+      { path: '/chat',element: <ProtectedRoute><ChatMenu /></ProtectedRoute>,children: [
+          { path: ':id', element: <ProtectedRoute><ChatConversation /></ProtectedRoute> }
         ]
       },
+      {path:'*',element:<PageNotFound/>}
 
     ]
   },
@@ -51,6 +56,10 @@ function App() {
       socketio.on('getOnlineUsers', (onlineUsers) => {
         dispatch(setOnlineUsers(onlineUsers))
       });
+      
+      socketio.on('notification', (notification) => {
+        dispatch(setLikeNotification(notification));
+      });
 
       socketio.on('disconnect', (reason) => {
         console.warn('Socket disconnected:', reason);
@@ -59,10 +68,12 @@ function App() {
       return () => {
         socketio?.close();
         dispatch(setSocket(null))
+  
       }
     } else {
       socketio?.close();
       dispatch(setSocket(null))
+      
     }
   }, [user, dispatch])
   return (

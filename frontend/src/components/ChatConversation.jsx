@@ -32,7 +32,7 @@ const ChatConversation = () => {
         } catch (error) {
             console.log(error)
         }
-    },1000),[])
+    },1000),[messages,dispatch])
 
     const sendMessageHander = async (receiverId) => {
         if (!textMessage.trim()) {

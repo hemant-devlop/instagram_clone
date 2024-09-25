@@ -9,14 +9,18 @@ module.exports = {
   theme: {
   	extend: {
       animation: {
+        fade: 'fadeIn 0.5s ease-in-out',
         'heart-bounce': 'heart-bounce 0.6s ease-out both', // Custom animation name
       },
       keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
         'heart-bounce': {
           '0%': { transform: 'scale(1)' },      // Start at normal size
           '30%': { transform: 'scale(1.3)' },   // Scale up slightly
           '50%': { transform: 'scale(1)' },     // Scale back to normal
-          // '70%': { transform: 'scale(1.2)' },   // Slightly scale up again
           '100%': { transform: 'scale(1)' },    // Back to normal size
         }
       },

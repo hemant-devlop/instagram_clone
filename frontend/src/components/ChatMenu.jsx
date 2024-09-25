@@ -22,11 +22,10 @@ const ChatMenu = () => {
     return (
         <div className='flex sm:ml-[80px] lg:ml-[16%] h-screen'>
             <section className='sm:w-1/2 md:w-1/4'>
-                <h1 className='hidden sm:block font-bold my-4 px-3 text-xl '>{user?.username}</h1>
-                <span className='sm:hidden flex items-center justify-center p-3'><FaInstagram size={'25px'} /></span>
+                <h1 className='hidden h-16 sm:flex items-center font-bold px-3 text-xl '>{user?.username}</h1>
+                <Link to='/'><span className='sm:hidden h-16 flex items-center justify-center p-3'><FaInstagram size={'25px'} /></span></Link>
                 <hr className='mb-4 border-gray-300 ' />
                 <div className='overflow-y-auto h-[80vh]'>
-                
                     {
                         suggestedUsers.map((suggestedUser) => {
                            const isOnline=onlineUsers.includes(suggestedUser?._id);
@@ -35,8 +34,8 @@ const ChatMenu = () => {
                                 <div onClick={() => {
                                     dispatch(setSelectedUser(suggestedUser));
                                     
-                                }}  className='flex items-center p-3 gap-3 hover:bg-gray-100 cursor-pointer'>
-                                    <Avatar className="sm:h-14 sm:w-14">
+                                }}  className='flex items-center p-3 gap-3 hover:bg-gray-100 cursor-pointer relative'>
+                                    <Avatar className={`sm:h-14 sm:w-14  ${isOnline?'border-4 border-green-400':''} sm:border-none `}>
                                         <AvatarImage src={suggestedUser?.profilePicture} alt="" />
                                         <AvatarFallback>CN</AvatarFallback>
                                     </Avatar>

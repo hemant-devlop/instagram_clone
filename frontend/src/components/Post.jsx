@@ -52,9 +52,9 @@ const Post = ({ post }) => {
     };
     const timeAgo = formatTimeAgo(createdAt);
 
-    const debouncePostComment = useCallback(debounce(async (id,commentText) => {
+    const debouncePostComment = useCallback(debounce(async (id, commentText) => {
         try {
-            const res = await axios.post(`http://localhost:8000/api/v1/post/${id}/comment`, { text:commentText }, {
+            const res = await axios.post(`http://localhost:8000/api/v1/post/${id}/comment`, { text: commentText }, {
                 headers: {
                     'content-type': 'application/json',
                 },
@@ -63,7 +63,7 @@ const Post = ({ post }) => {
             if (res.data.success) {
                 const updatedCommentData = [...comment, res.data.comment]
                 setComment(updatedCommentData)
-                
+
                 const updatedPostData = posts?.map(postData => postData._id === post._id ? { ...postData, comments: updatedCommentData } : postData)
                 dispatch(setPost(updatedPostData))
                 toast.success(res.data.message, { duration: 2000, });
@@ -72,7 +72,7 @@ const Post = ({ post }) => {
         } catch (error) {
             console.log(error)
         }
-    },1000),[comment, posts, post?._id, dispatch])
+    }, 1000), [comment, posts, post?._id, dispatch])
     //post comment func
     const handleComments = async () => {
         // try {
@@ -94,7 +94,7 @@ const Post = ({ post }) => {
         // } catch (error) {
         //     console.log(error)
         // }
-        debouncePostComment(post._id,text)
+        debouncePostComment(post._id, text)
     }
     //post like n unlike func
     const likeUnlikePost = async () => {
@@ -134,10 +134,21 @@ const Post = ({ post }) => {
             console.log(error)
             toast.error(error.response.data.message);
         }
-    },1000),[posts,post?._id, dispatch])
+    }, 1000), [posts, post?._id, dispatch])
 
     const deletePostHandler = async () => {
         debounceDeletePost(post?._id)
+    }
+
+    const bookmarkPostHandler=async ()=>{
+        try {
+            const res=await axios.get(`http://localhost:8000/api/v1/post/${post?._id}/bookmark`,{withCredentials:true});
+            if(res.data.success){
+                toast.success(res.data.message);
+            }
+        } catch (error) {
+            console.log(erro)
+        }
     }
     //adding comment in post func
     const changeEventHandler = (e) => {
@@ -149,7 +160,7 @@ const Post = ({ post }) => {
         }
     }
     return (
-        <div className='my-8 w-full max-w-sm mx-auto'>
+        <div className='mb-8 w-full max-w-sm mx-auto'>
             <div className='flex items-center justify-between'>
                 <div className='flex  gap-3'>
                     <Avatar>
@@ -168,7 +179,7 @@ const Post = ({ post }) => {
                         <MoreHorizontal className='cursor-pointer' />
                     </DialogTrigger>
                     <DialogContent className='flex flex-col items-center text-sm text-center'>
-                        <Button variant="ghost" className='cursor-pointer w-fit text-[#ed4956] font-bold rounded'>Unfollow</Button>
+                        <Button variant="ghost" className={`cursor-pointer w-fit text-[#ed4956] font-bold rounded ${user?._id === post?.author._id && 'hidden'} `} >Unfollow</Button>
                         <Button variant="ghost" className='cursor-pointer w-fit font-bold rounded'>add to favorites</Button>
                         {user && user?._id === post?.author._id && <Button onClick={deletePostHandler} variant="ghost" className='cursor-pointer w-fit rounded'>Delete</Button>}
                     </DialogContent>
@@ -190,7 +201,7 @@ const Post = ({ post }) => {
 
                     <Send className='cursor-pointer hover:text-gray-600' />
                 </div>
-                <Bookmark className='cursor-pointer hover:text-gray-600' />
+                <Bookmark onClick={bookmarkPostHandler} className='cursor-pointer hover:text-gray-600' />
             </div>
             <span className='block font-medium mb-2'>{postLike} likes</span>
             <p>

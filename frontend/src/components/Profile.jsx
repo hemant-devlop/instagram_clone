@@ -86,7 +86,7 @@ const Profile = () => {
           </div>
           <div className='grid grid-cols-3 gap-2'>
             {displayedPost?.map(post =>
-              <div key={post?._id} className='relative group cursor-pointer'>
+              <div key={post?._id} onClick={()=>alert(post._id)} className='relative group cursor-pointer'>
                 <img src={post.image} alt="post_img" className='rounded w-full aspect-square object-cover' />
                 <div className='absolute rounded flex items-center justify-center bg-black bg-opacity-50 inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
                   <div className='flex flex-col sm:flex-row items-center text-white sm:space-x-4 gap-1'>

@@ -1,12 +1,13 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Label } from './ui/label'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
 import axios from 'axios'
 import { toast } from 'sonner'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, redirect, useNavigate } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
 import { IoLogoFacebook } from "react-icons/io";
+import { useSelector } from 'react-redux'
 
 const Signup = () => {
     const [input, setInput] = useState({
@@ -15,6 +16,7 @@ const Signup = () => {
         email: '',
         password: ''
     });
+    const {user}=useSelector(store=>store.auth)
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
 
@@ -49,6 +51,11 @@ const Signup = () => {
             setLoading(false);
         }
     }
+    useEffect(()=>{
+        if(user){
+            navigate('*')
+        }
+    },[])
     return (<>
         <div className='flex items-center w-screen h-screen justify-center overflow-x-hidden'>
             <div className="max-w-[360px] min-w-[350px] border flex items-center justify-center">
