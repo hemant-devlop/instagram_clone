@@ -54,7 +54,7 @@ const Post = ({ post }) => {
 
     const debouncePostComment = useCallback(debounce(async (id, commentText) => {
         try {
-            const res = await axios.post(`http://localhost:8000/api/v1/post/${id}/comment`, { text: commentText }, {
+            const res = await axios.post(`https://instagram-clone-puy1.onrender.com/api/v1/post/${id}/comment`, { text: commentText }, {
                 headers: {
                     'content-type': 'application/json',
                 },
@@ -75,32 +75,13 @@ const Post = ({ post }) => {
     }, 1000), [comment, posts, post?._id, dispatch])
     //post comment func
     const handleComments = async () => {
-        // try {
-        //     const res = await axios.post(`http://localhost:8000/api/v1/post/${post._id}/comment`, { text }, {
-        //         headers: {
-        //             'content-type': 'application/json',
-        //         },
-        //         withCredentials: true
-        //     })
-        //     if (res.data.success) {
-        //         const updatedCommentData = [...comment, res.data.comment]
-        //         setComment(updatedCommentData)
-
-        //         const updatedPostData = posts?.map(postData => postData._id === post._id ? { ...postData, comments: updatedCommentData } : postData)
-        //         dispatch(setPost(updatedPostData))
-        //         toast.success(res.data.message, { duration: 2000, });
-        //         setText("");
-        //     }
-        // } catch (error) {
-        //     console.log(error)
-        // }
         debouncePostComment(post._id, text)
     }
     //post like n unlike func
     const likeUnlikePost = async () => {
         try {
             const action = liked ? "dislike" : "like";
-            const res = await axios.get(`http://localhost:8000/api/v1/post/${post._id}/${action}`, { withCredentials: true });
+            const res = await axios.get(`https://instagram-clone-puy1.onrender.com/api/v1/post/${post._id}/${action}`, { withCredentials: true });
             if (res.data.success) {
                 const updatedLikes = liked ? postLike - 1 : postLike + 1;
 
@@ -124,7 +105,7 @@ const Post = ({ post }) => {
     //delete post func
     const debounceDeletePost = useCallback(debounce(async (id) => {
         try {
-            const res = await axios.delete(`http://localhost:8000/api/v1/post/delete/${id}`, { withCredentials: true })
+            const res = await axios.delete(`https://instagram-clone-puy1.onrender.com/api/v1/post/delete/${id}`, { withCredentials: true })
             if (res.data.success) {
                 const updatedPosts = posts.filter(postItem => postItem._id !== post._id);
                 dispatch(setPost(updatedPosts));
@@ -142,7 +123,7 @@ const Post = ({ post }) => {
 
     const bookmarkPostHandler=async ()=>{
         try {
-            const res=await axios.get(`http://localhost:8000/api/v1/post/${post?._id}/bookmark`,{withCredentials:true});
+            const res=await axios.get(`https://instagram-clone-puy1.onrender.com/api/v1/post/${post?._id}/bookmark`,{withCredentials:true});
             if(res.data.success){
                 toast.success(res.data.message);
             }
