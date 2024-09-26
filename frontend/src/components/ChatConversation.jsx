@@ -19,7 +19,7 @@ const ChatConversation = () => {
 
     const debounceMessage = useCallback(debounce(async (receiverId,message) => {
         try {
-            const res = await axios.post(`http://localhost:8000/api/v1/message/send/${receiverId}`, { message }, {
+            const res = await axios.post(`https://instagram-clone-puy1.onrender.com/api/v1/message/send/${receiverId}`, { message }, {
                 headers: {
                     "Content-Type": "application/json"
                 },
