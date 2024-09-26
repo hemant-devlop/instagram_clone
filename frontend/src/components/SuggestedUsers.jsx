@@ -1,15 +1,18 @@
 import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { MessageCircle } from 'lucide-react'
+import { setSelectedUser } from '@/redux/chatSlice'
 
 const SuggestedUsers = () => {
     const { suggestedUsers } = useSelector(store => store.auth)
     const navigate = useNavigate();
 
+
     const handleGetProfile = (userId) => {
         navigate(`/profile/${userId}`);
+       
     }
     return (
         <div className='my-10 '>

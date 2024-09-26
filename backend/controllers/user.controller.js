@@ -1,4 +1,4 @@
-import {User}  from "../models/user.model.js"
+import { User } from "../models/user.model.js"
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import getDataUri from "../utils/datauri.js";
@@ -8,7 +8,7 @@ import { Post } from "../models/post.model.js";
 //register form
 export const register = async (req, res) => {
     try {
-        const { username,fullname, email, password,  } = req.body;
+        const { username, fullname, email, password, } = req.body;
         if (!username || !fullname || !email || !password) {
             return res.status(401).json({
                 message: 'required all fields',
@@ -66,10 +66,10 @@ export const login = async (req, res) => {
             })
         }
         const token = await jwt.sign({ userId: user._id }, process.env.SECRET_KEY, { expiresIn: '1d' })
-        const populatedPost= await Promise.all(
-            user.posts.map(async (postId)=>{
-                const post=await Post.findById(postId);
-                if(post && post.author.equals(user._id)){ 
+        const populatedPost = await Promise.all(
+            user.posts.map(async (postId) => {
+                const post = await Post.findById(postId);
+                if (post && post.author.equals(user._id)) {
                     return post;
                 }
                 return null;
@@ -78,7 +78,7 @@ export const login = async (req, res) => {
         user = {
             _id: user._id,
             username: user.username,
-            fullname:user.fullname,
+            fullname: user.fullname,
             email: user.email,
             profilePicture: user.profilePicture,
             bio: user.bio,
@@ -111,7 +111,7 @@ export const logout = async (_, res) => {
 export const getProfile = async (req, res) => {
     try {
         const userId = req.params.id;
-        let user = await User.findById(userId).populate({path:'posts',createdAt:-1}).populate('bookmarks').select('-password')
+        let user = await User.findById(userId).populate({ path: 'posts', createdAt: -1 }).populate('bookmarks').select('-password')
         return res.status(200).json({
             user,
             success: true
@@ -124,7 +124,7 @@ export const getProfile = async (req, res) => {
 export const editProfile = async (req, res) => {
     try {
         const userId = req.id;
-        const { bio, gender,fullname } = req.body;
+        const { bio, gender, fullname } = req.body;
         const profilePicture = req.file;
         let cloudResponse;
         if (profilePicture) {
@@ -140,7 +140,7 @@ export const editProfile = async (req, res) => {
         }
         if (bio) user.bio = bio;
         if (gender) user.gender = gender;
-        if (fullname) user.fullname=fullname;
+        if (fullname) user.fullname = fullname;
         if (profilePicture) user.profilePicture = cloudResponse.secure_url;
 
         await user.save();
@@ -183,14 +183,16 @@ export const followAndUnfollow = async (req, res) => {
             })
         }
         const user = await User.findById(followerCondidate);
+
         const target = await User.findById(followedCondidate);
+
         if (!user || !target) {
             return res.status(400).json({
                 message: 'user not found',
                 success: false
             });
         }
-        
+
         //cheak for follow or unfollow
         const isfollowing = user.following.includes(followedCondidate);
         if (isfollowing) {
@@ -199,14 +201,27 @@ export const followAndUnfollow = async (req, res) => {
                 User.updateOne({ _id: followerCondidate }, { $pull: { following: followedCondidate } }),
                 User.updateOne({ _id: followedCondidate }, { $pull: { followers: followerCondidate } })
             ])
-            return res.status(200).json({message:'unfollow success',success:true})
+            const updatedUser = await User.findById(followerCondidate).select('-password')
+            const updatedTarget = await User.findById(followedCondidate).select('-password')
+            return res.status(200).json({ 
+                message: 'unfollow success',
+                success: true, 
+                updatedUser, 
+                updatedTarget })
         } else {
             //follow logic
             await Promise.all([
                 User.updateOne({ _id: followerCondidate }, { $push: { following: followedCondidate } }),
                 User.updateOne({ _id: followedCondidate }, { $push: { followers: followerCondidate } })
             ])
-            return res.status(200).json({message:'follow success',success:true})
+            const updatedUser = await User.findById(followerCondidate).select('-password')
+            const updatedTarget = await User.findById(followedCondidate).select('-password')
+            return res.status(200).json({
+                message: 'follow success',
+                success: true,
+                updatedUser,
+                updatedTarget
+            })
         }
     } catch (error) {
         console.log(error)

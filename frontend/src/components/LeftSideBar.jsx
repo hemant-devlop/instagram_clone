@@ -46,7 +46,7 @@ const LeftSideBar = () => {
     //logout func
     const logoutHandler = async () => {
         try {
-            const res = await axios.get('https://instagram-clone-puy1.onrender.com/api/v1/user/logout', { withCredentials: true })
+            const res = await axios.get('http://localhost:8000/api/v1/user/logout', { withCredentials: true })
             if (res.data.success) {
                 dispatch(setAuthUser(null))
                 dispatch(setPost([]))
@@ -132,7 +132,7 @@ const LeftSideBar = () => {
                         <TooltipProvider key={index} >
                             <Tooltip >
                                 <TooltipTrigger>
-                                    <div onClick={() => sidebarHandler(item.text)} className={`flex items-center justify-center lg:justify-start gap-4 relative hover:bg-gray-100 cursor-pointer rounded-lg p-0 my-1 ${item.bottombar ? 'block sm:flex' : 'hidden sm:flex'} `}>
+                                    <div onClick={() => sidebarHandler(item.text)} className={`flex items-center justify-center lg:justify-start gap-4 relative sm:hover:bg-gray-100 cursor-pointer rounded-lg p-0 my-1 ${item.bottombar ? 'block sm:flex' : 'hidden sm:flex'} `}>
                                         {item.icon}
                                         {
                                             item.text === "Notifications" && likeNotification.length > 0 && (
@@ -160,7 +160,7 @@ const LeftSideBar = () => {
                                         }
                                     </div>
                                 </TooltipTrigger>
-                                <TooltipContent side="right">
+                                <TooltipContent side="top">
                                     <span className='font-medium'>
                                         {item.title}
                                     </span>

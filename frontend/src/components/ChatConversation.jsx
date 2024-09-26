@@ -1,11 +1,11 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
 import Messages from './Messages'
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
-import { setMessages } from '@/redux/chatSlice'
+import { setMessages, setSelectedUser } from '@/redux/chatSlice'
 import { MessageCircleCode } from 'lucide-react'
 import { debounce } from 'lodash'
 
@@ -13,12 +13,13 @@ import { debounce } from 'lodash'
 const ChatConversation = () => {
     const dispatch = useDispatch();
     const [textMessage, setTextMessage] = useState("");
+    const [isLoading,setIsLoading]=useState(true);
     const { selectedUser, onlineUsers, messages } = useSelector(store => store.chat)
     const isOnline = onlineUsers.includes(selectedUser?._id);
 
     const debounceMessage = useCallback(debounce(async (receiverId,message) => {
         try {
-            const res = await axios.post(`https://instagram-clone-puy1.onrender.com/api/v1/message/send/${receiverId}`, { message }, {
+            const res = await axios.post(`http://localhost:8000/api/v1/message/send/${receiverId}`, { message }, {
                 headers: {
                     "Content-Type": "application/json"
                 },
@@ -42,7 +43,6 @@ const ChatConversation = () => {
         debounceMessage(receiverId,textMessage)
 
     }
-
     return (<>
         {selectedUser ? (
             <section className='flex flex-col flex-1 h-[100vh] border-l border-l-gray-300 overflow-y-auto'>
@@ -57,9 +57,9 @@ const ChatConversation = () => {
                     </div>
                 </div>
                 <Messages selectedUser={selectedUser} />
-                <div className='flex items-center p-2 sm:p-4 border-t border-t-gray-300 mb-10 sm:mb-0'>
-                    <Input type="text" value={textMessage} onChange={(e) => setTextMessage(e.target.value)} className='flex-1 focus-visible:ring-transparent mr-2' placeholder='message....' />
-                    <Button onClick={() => sendMessageHander(selectedUser?._id)} disabled={!textMessage.trim()}>send</Button>
+                <div className='flex items-center m-4 p-1 sm:p-1 border rounded-full  mb-12 sm:mb-2'>
+                    <Input type="text" value={textMessage} onChange={(e) => setTextMessage(e.target.value)} className='flex-1 focus-visible:ring-transparent mr-2 border-none rounded-full' placeholder='message....' />
+                    <Button variant="none" className="text-[#3797f0]"  onClick={() => sendMessageHander(selectedUser?._id)} disabled={!textMessage.trim()}>send</Button>
                 </div>
 
             </section>) : (

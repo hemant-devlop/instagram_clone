@@ -8,17 +8,17 @@ import { FaInstagram } from 'react-icons/fa'
 
 
 const ChatMenu = () => {
-    const { user, suggestedUsers } = useSelector(store => store.auth)
+    const { user, suggestedUsers,userProfile } = useSelector(store => store.auth)
     const { onlineUsers } = useSelector(store => store.chat)
     const dispatch = useDispatch();
     const location=useLocation();
     const currentPath=location.pathname;
-    
     useEffect(()=>{
+        dispatch(setSelectedUser(userProfile))
         return ()=>{
             dispatch(setSelectedUser(null))
         }
-    },[])
+    },[userProfile])
     return (
         <div className='flex sm:ml-[80px] lg:ml-[16%] h-screen'>
             <section className='sm:w-1/2 md:w-1/4'>

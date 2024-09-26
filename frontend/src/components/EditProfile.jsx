@@ -53,14 +53,13 @@ const EditProfile = () => {
 
         try {
             setIsloading(true);
-            const res = await axios.post('https://instagram-clone-puy1.onrender.com/api/v1/user/profile/edit', formData, {
+            const res = await axios.post('http://localhost:8000/api/v1/user/profile/edit', formData, {
                 headers: {
                     "Content-Type": "multipart/form-data"
                 },
                 withCredentials: true
             });
             if (res.data.success) {
-                console.log(res.data)
                 const updatedUserData = {
                     ...user,
                     bio: res.data.user?.bio,
