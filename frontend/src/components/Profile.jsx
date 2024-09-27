@@ -6,50 +6,24 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
 import { AtSign, Ellipsis, Heart, Loader2, MessageCircle } from 'lucide-react';
 import { Badge } from './ui/badge';
-import axios from 'axios';
-import { toast } from 'sonner';
-import { setAuthUser, setUserProfile } from '@/redux/authSlice';
-import { setSelectedUser } from '@/redux/chatSlice';
+import useFollowUnfollow from '@/hooks/useFollowUnfollow';
 
 const Profile = () => {
-  const dispatch=useDispatch();
   const params = useParams();
   const userId = params.id
   const { loading, error } = useGetUserProfile(userId);
   const { userProfile, user } = useSelector(store => store.auth);
   const [activeTab, setActiveTab] = useState("posts");
   const navigate=useNavigate()
+
   const loginUser = user?._id === userProfile?._id;
-  const isFollowing=userProfile?.followers?.some(followers=>followers===user._id)
 
-  const handleFollowUnfollow = async (id) => {
-    try {
-      const res = await axios.post(`https://instagram-clone-puy1.onrender.com/api/v1/user/followorunfollow/${id}`, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },{withCredentials:true})
-      if (res.data.success) {
-        const {updatedTarget}=res.data;
+  const {followUnfollow,isFollowing}=useFollowUnfollow();
+  
+  // const isFollowing=userProfile?.followers?.some(followers=>followers===user._id)
 
-
-        let updatedFollowers,updatedFollowing;
-        if(isFollowing){
-          updatedFollowers=userProfile?.followers?.filter(uid=>uid!==user._id);
-          updatedFollowing=userProfile?.following?.filter(uid=>uid!==user._id);
-        }else{
-          updatedFollowers=[...userProfile?.followers,user._id];
-          updatedFollowing=[...userProfile?.following,updatedTarget._id];
-        }
-
-        dispatch(setUserProfile({...userProfile,followers:updatedFollowers}))
-        dispatch(setAuthUser({...user,following:updatedFollowing}))
-        toast.success(res.data.message)
-      }
-
-    } catch (error) {
-      console.log(error)
-    }
+  const handleFollowUnfollow =(id) => {
+    followUnfollow(id)
   }
 
   const handleTabChange = (tab) => {
@@ -65,7 +39,7 @@ const Profile = () => {
         <Loader2 className='mr-2 h-4 w-4 animate-spin' />please wait
       </Button>
     </div>) : (<div className='flex max-w-5xl justify-center mx-auto md:pl-20 lg:pl-40'>
-      <div className='flex flex-col sm:gap-20 p-8'>
+      <div className='flex flex-col sm:gap-20 p-4'>
         <div className='grid grid-cols-1 sm:grid-cols-2 gap-6'>
           <section className="flex items-center justify-center">
             <Avatar className="h-20 w-20 sm:h-40 sm:w-40">
@@ -87,7 +61,7 @@ const Profile = () => {
                   ) : (
                     isFollowing ? (
                       <div className="flex gap-2">
-                        <Button onClick={() => handleFollowUnfollow(userProfile._id)}  variant='secondary' className="h-8">unfollow</Button>
+                        <Button onClick={() => handleFollowUnfollow(userProfile._id)}  variant='secondary' className="h-8">following</Button>
                         <Button onClick={()=>{navigate(`/chat/${userProfile._id}`)}} variant='secondary' className="h-8">message</Button>
 
                       </div>
@@ -99,7 +73,7 @@ const Profile = () => {
               </div>
               <div className='flex items-center justify-around sm:justify-start gap-4 order-3 sm:order-2 border-t sm:border-none py-3 sm:py-1'>
                 <p className='text-center'><span className='font-semibold'>{userProfile?.posts?.length}</span> posts</p>
-                <p className='text-center cursor-pointer'><span className='font-semibold'>{userProfile?.followers?.length}</span> followers</p>
+                <p className='text-center cursor-pointer'><span className='font-semibold mx-2'>{userProfile?.followers?.length}</span> followers</p>
                 <p className='text-center cursor-pointer'><span className='font-semibold'>{userProfile?.following?.length}</span> following</p>
               </div>
               <div className='flex flex-col gap-1 order-2'>

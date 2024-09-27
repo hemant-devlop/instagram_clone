@@ -67,12 +67,12 @@ const CommentDialog = ({ open, setOpen }) => {
                     <DialogDescription></DialogDescription>
                 </VisuallyHidden>
                 <div className='flex flex-1'>
-                    <div className='w-1/2'>
+                    <div className='w-1/2 hidden sm:block'>
                         <img src={selectedPost?.image}
                             alt="post_img"
                             className='h-full w-full aspect-square object-cover rounded-l-lg' />
                     </div>
-                    <div className='w-1/2 flex flex-col '>
+                    <div className='w-full sm:w-1/2 flex flex-col '>
                         <div className='flex items-center justify-between p-4'>
                             <div className='flex gap-3 items-center'>
                                 <Link>
@@ -82,7 +82,7 @@ const CommentDialog = ({ open, setOpen }) => {
                                     </Avatar>
                                 </Link>
                                 <div>
-                                    <Link className='font-semibold text-sm'>{selectedPost?.author?.username}</Link>
+                                    <Link to={`/profile/${selectedPost?.author?._id}`} className='font-semibold text-sm'>{selectedPost?.author?.username}</Link>
                                     {/* <span className='text-gray-600 text-sm'>bio here</span> */}
                                 </div>
                             </div>
@@ -107,7 +107,7 @@ const CommentDialog = ({ open, setOpen }) => {
                                     <AvatarImage src={selectedPost?.author?.profilePicture} alt="profile" />
                                     <AvatarFallback>CN</AvatarFallback>
                                 </Avatar>
-                                <h1 className='font-medium'>{selectedPost?.author?.username} <span className='pl-1 font-normal leading-3 text-sm'>{selectedPost?.caption}</span></h1>
+                                <Link to={`/profile/${selectedPost?.author?._id}`}><h1 className='font-medium cursor-pointer' >{selectedPost?.author?.username} <span className='pl-1 font-normal leading-3 text-sm'>{selectedPost?.caption}</span></h1></Link>
                             </div>
                             {
                                 comment?.map(singleComment => <Comment key={singleComment._id} singleComment={singleComment} />)

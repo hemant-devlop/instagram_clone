@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { MessageCircle } from 'lucide-react'
 import { setSelectedUser } from '@/redux/chatSlice'
+import { Dialog, DialogContent,DialogTrigger } from './ui/dialog'
+import { Button } from './ui/button'
 
 const SuggestedUsers = () => {
     const { suggestedUsers } = useSelector(store => store.auth)
@@ -34,7 +36,15 @@ const SuggestedUsers = () => {
                                 <span className='text-gray-600 text-xs'>{user?.fullname || 'bio here...'}</span>
                             </div>
                         </div>
+                        <Dialog>
+                            <DialogTrigger>
                         <span className='text-[#3badf8] cursor-pointer font-bold text-xs hover:text-[#3190cf]'>follow</span>
+                            </DialogTrigger>
+                            <DialogContent className='flex flex-col items-center text-sm text-center'>
+                        <Button variant="ghost" className='cursor-pointer w-fit text-[#ed4956] font-bold rounded' >follow</Button>
+                        <Button variant="ghost" className='cursor-pointer w-fit font-bold rounded'>cancel</Button>
+                    </DialogContent>
+                        </Dialog>
                     </div>
                 )
             }
