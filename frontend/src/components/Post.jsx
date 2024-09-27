@@ -138,7 +138,7 @@ const Post = ({ post }) => {
     }
 //handle follo dialog
     const handleOpenFolloDialog=()=>{
-        // dispatch(setSelectedPost(post));
+        dispatch(setSelectedPost(post));
         setIsOpen(true)
     }
     //adding comment in post func
