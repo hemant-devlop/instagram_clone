@@ -34,7 +34,7 @@ const CommentDialog = ({ open, setOpen }) => {
     }
     const debounceComment = useCallback(debounce(async (id,commentText) => {
         try {
-            const res = await axios.post(`http://localhost:8000/api/v1/post/${id}/comment`, { text:commentText }, {
+            const res = await axios.post(`https://instagram-clone-6778.onrender.com/api/v1/post/${id}/comment`, { text:commentText }, {
                 headers: {
                     'content-type': 'application/json',
                 },
