@@ -42,7 +42,7 @@ const Profile = () => {
       <div className='flex flex-col sm:gap-20 p-4'>
         <div className='grid grid-cols-1 sm:grid-cols-2 gap-6'>
           <section className="flex items-center justify-center">
-            <Avatar className="h-20 w-20 sm:h-40 sm:w-40">
+            <Avatar className="h-40 w-40">
               <AvatarImage src={userProfile?.profilePicture} alt="post" />
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
