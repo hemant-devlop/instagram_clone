@@ -65,7 +65,7 @@ export const login = async (req, res) => {
                 success: false
             })
         }
-        const token = await jwt.sign({ userId: user._id }, process.env.SECRET_KEY, { expiresIn: '1d' })
+        const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, { expiresIn: '1d' })
         const populatedPost = await Promise.all(
             user.posts.map(async (postId) => {
                 const post = await Post.findById(postId);

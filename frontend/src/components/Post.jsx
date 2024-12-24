@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
-import { Dialog, DialogContent, DialogTrigger } from './ui/dialog'
+import { Dialog, DialogContent, DialogTrigger,DialogDescription, DialogTitle } from './ui/dialog'
 import { Bookmark, CloudCog, MessageCircle, MoreHorizontal, Send } from 'lucide-react'
 import { Button } from './ui/button'
 import { FaHeart, FaRegHeart } from "react-icons/fa";
@@ -15,21 +15,22 @@ import { Badge } from './ui/badge'
 import { debounce } from 'lodash'
 import useFollowUnfollow from '@/hooks/useFollowUnfollow'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 
 const Post = ({ post }) => {
     const { createdAt } = post;
     const [text, setText] = useState('');
     const [open, setOpen] = useState(false)
     const { user } = useSelector(store => store.auth);
-    const { posts,selectedPost } = useSelector(store => store.post);
+    const { posts, selectedPost } = useSelector(store => store.post);
     const dispatch = useDispatch();
     const [liked, setLiked] = useState(post.likes.includes(user?._id) || false)
     const [active, setActive] = useState(false);
     const [postLike, setPostLike] = useState(post.likes.length);
     const [comment, setComment] = useState(post.comments)
-    const [isOpen,setIsOpen]=useState(false)
-    const navigate=useNavigate();
-    const{followUnfollow}=useFollowUnfollow();
+    const [isOpen, setIsOpen] = useState(false)
+    const navigate = useNavigate();
+    const { followUnfollow } = useFollowUnfollow();
 
     const formatTimeAgo = (createdAt) => {
         const now = moment();
@@ -54,7 +55,7 @@ const Post = ({ post }) => {
 
     const debouncePostComment = useCallback(debounce(async (id, commentText) => {
         try {
-            const res = await axios.post(`https://instagram-clone-puy1.onrender.com/api/v1/post/${id}/comment`, { text: commentText }, {
+            const res = await axios.post(`http://localhost:8000/api/v1/post/${id}/comment`, { text: commentText }, {
                 headers: {
                     'content-type': 'application/json',
                 },
@@ -81,7 +82,7 @@ const Post = ({ post }) => {
     const likeUnlikePost = async () => {
         try {
             const action = liked ? "dislike" : "like";
-            const res = await axios.get(`https://instagram-clone-puy1.onrender.com/api/v1/post/${post._id}/${action}`, { withCredentials: true });
+            const res = await axios.get(`http://localhost:8000/api/v1/post/${post._id}/${action}`, { withCredentials: true });
             if (res.data.success) {
                 const updatedLikes = liked ? postLike - 1 : postLike + 1;
 
@@ -105,7 +106,7 @@ const Post = ({ post }) => {
     //delete post debounce func 
     const debounceDeletePost = useCallback(debounce(async (id) => {
         try {
-            const res = await axios.delete(`https://instagram-clone-puy1.onrender.com/api/v1/post/delete/${id}`, { withCredentials: true })
+            const res = await axios.delete(`http://localhost:8000/api/v1/post/delete/${id}`, { withCredentials: true })
             if (res.data.success) {
                 const updatedPosts = posts.filter(postItem => postItem._id !== post._id);
                 dispatch(setPost(updatedPosts));
@@ -120,24 +121,24 @@ const Post = ({ post }) => {
     const deletePostHandler = async () => {
         debounceDeletePost(post?._id)
     }
-//bookmark post handler
-    const bookmarkPostHandler=async ()=>{
+    //bookmark post handler
+    const bookmarkPostHandler = async () => {
         try {
-            const res=await axios.get(`https://instagram-clone-puy1.onrender.com/api/v1/post/${post?._id}/bookmark`,{withCredentials:true});
-            if(res.data.success){
+            const res = await axios.get(`http://localhost:8000/api/v1/post/${post?._id}/bookmark`, { withCredentials: true });
+            if (res.data.success) {
                 toast.success(res.data.message);
             }
         } catch (error) {
             console.log(error)
         }
     }
-//follow unfollow
-    const handleFollowUser=()=>{
+    //follow unfollow
+    const handleFollowUser = () => {
         followUnfollow(selectedPost.author._id)
         setIsOpen(false)
     }
-//handle follo dialog
-    const handleOpenFolloDialog=()=>{
+    //handle follo dialog
+    const handleOpenFolloDialog = () => {
         dispatch(setSelectedPost(post));
         setIsOpen(true)
     }
@@ -150,19 +151,19 @@ const Post = ({ post }) => {
             setText('')
         }
     }
-    const handleNavigateProfile=(id)=>{
-       navigate(`/profile/${id}`)
+    const handleNavigateProfile = (id) => {
+        navigate(`/profile/${id}`)
     }
     useEffect(() => {
         return () => {
-           debouncePostComment.cancel();
-           debounceDeletePost.cancel();
+            debouncePostComment.cancel();
+            debounceDeletePost.cancel();
         };
-     }, [debouncePostComment, debounceDeletePost]);
-     
+    }, [debouncePostComment, debounceDeletePost]);
+
     return (
         <div className='mb-8 w-full max-w-sm mx-auto'>
-        <div/>
+            <div />
             <div className='flex items-center justify-between'>
                 <div className='flex  gap-3'>
                     <Avatar>
@@ -170,17 +171,21 @@ const Post = ({ post }) => {
                         <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
                     <div className='flex flex-col'>
-                        <h1 onClick={()=>handleNavigateProfile(post.author._id)} className='font-medium cursor-pointer'>{post.author?.username}</h1>
+                        <h1 onClick={() => handleNavigateProfile(post.author._id)} className='font-medium cursor-pointer'>{post.author?.username}</h1>
                         <span className='text-xs'>Original</span>
                     </div>
                     <span className='mt-1 text-sm hidden sm:block'>{timeAgo}</span>
-                    <span className='mt-1'>{user?._id === post?.author._id ?<Badge variant='secondary'>Author</Badge>:""}</span>
+                    <span className='mt-1'>{user?._id === post?.author._id ? <Badge variant='secondary'>Author</Badge> : ""}</span>
                 </div>
                 <Dialog open={isOpen}>
                     <DialogTrigger asChild>
-                        <MoreHorizontal  onClick={handleOpenFolloDialog} className='cursor-pointer' />
+                        <MoreHorizontal onClick={handleOpenFolloDialog} className='cursor-pointer' />
                     </DialogTrigger>
-                    <DialogContent onInteractOutside={()=>setIsOpen(false)} className='flex flex-col items-center text-sm text-center'>
+                    <DialogContent onInteractOutside={() => setIsOpen(false)} className='flex flex-col items-center text-sm text-center'>
+                        <VisuallyHidden>
+                            <DialogTitle></DialogTitle>
+                            <DialogDescription></DialogDescription>
+                        </VisuallyHidden>
                         <Button onClick={handleFollowUser} variant="ghost" className={`cursor-pointer w-fit text-[#ed4956] font-bold rounded ${user?._id === post?.author._id && 'hidden'} `} >follow/<span className='text-black'>unfollow</span></Button>
                         <Button variant="ghost" className='cursor-pointer w-fit font-bold rounded'>add to favorites</Button>
                         {user && user?._id === post?.author._id && <Button onClick={deletePostHandler} variant="ghost" className='cursor-pointer w-fit rounded'>Delete</Button>}
@@ -207,7 +212,7 @@ const Post = ({ post }) => {
             </div>
             <span className='block font-medium mb-2'>{postLike} likes</span>
             <p>
-                <span onClick={()=>handleNavigateProfile(post.author._id)} className='font-medium mr-2 cursor-pointer'>{post.author?.username}</span>
+                <span onClick={() => handleNavigateProfile(post.author._id)} className='font-medium mr-2 cursor-pointer'>{post.author?.username}</span>
                 {post.caption}
             </p>
             {comment.length > 0 ?

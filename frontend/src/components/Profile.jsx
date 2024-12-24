@@ -81,7 +81,7 @@ const Profile = () => {
                 <Badge className='w-fit' variant="secondary">
                   <AtSign size={13} /><span className='pl-1'>{userProfile?.username}</span>
                 </Badge>
-                <textarea disabled className='bg-white w-full min-h-24 resize-none text-ellipsis overflow-y-hidden' value={userProfile?.bio || "🧑 Learn code with me with practical exposure 👊DM for collaboration"}></textarea>
+                <textarea disabled className='bg-white w-full min-h-24 resize-none text-ellipsis overflow-y-hidden' value={userProfile?.bio || ""}></textarea>
               </div>
             </div>
           </section>

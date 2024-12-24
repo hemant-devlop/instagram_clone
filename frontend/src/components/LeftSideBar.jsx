@@ -46,7 +46,7 @@ const LeftSideBar = () => {
     //logout func
     const logoutHandler = async () => {
         try {
-            const res = await axios.get('https://instagram-clone-puy1.onrender.com/api/v1/user/logout', { withCredentials: true })
+            const res = await axios.get('http://localhost:8000/api/v1/user/logout', { withCredentials: true })
             if (res.data.success) {
                 dispatch(setAuthUser(null))
                 dispatch(setPost([]))
@@ -72,6 +72,8 @@ const LeftSideBar = () => {
             navigate('/')
         } else if (textType === "Messages") {
             navigate('/chat')
+        }else if (textType === "Search") {
+            navigate('/search')
         }
 
     }

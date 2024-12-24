@@ -15,7 +15,7 @@ const useFollowUnfollow = () => {
     setLoading(true);
     setError(null); // Clear previous errors
     try {
-        const res = await axios.post(`https://instagram-clone-puy1.onrender.com/api/v1/user/followorunfollow/${userId}`,{}, {
+        const res = await axios.post(`http://localhost:8000/api/v1/user/followorunfollow/${userId}`,{}, {
           headers: {
             'Content-Type': 'application/json',
           },

@@ -16,6 +16,7 @@ import { setLikeNotification } from './redux/rtnSlice'
 import ProtectedRoute from './components/ProtectedRoute'
 import PageNotFound from './components/PageNotFound'
 import StoryFeed from './components/StoryFeed'
+import Search from './components/Search'
 
 
 const browserRouter = createBrowserRouter([
@@ -26,6 +27,7 @@ const browserRouter = createBrowserRouter([
       { path: '/', element: <ProtectedRoute><Home /></ProtectedRoute> },
       { path: '/profile/:id', element: <ProtectedRoute><Profile /></ProtectedRoute> },
       { path: '/account/edit', element: <ProtectedRoute><EditProfile /></ProtectedRoute> },
+      { path: '/search', element: <ProtectedRoute><Search/></ProtectedRoute> },
       { path: '/chat',element: <ProtectedRoute><ChatMenu /></ProtectedRoute>,children: [
           { path: ':id', element: <ProtectedRoute><ChatConversation /></ProtectedRoute> }
         ]
@@ -44,7 +46,7 @@ function App() {
   useEffect(() => {
     let socketio;
     if (user) {
-      socketio = io('https://instagram-clone-puy1.onrender.com', {
+      socketio = io('http://localhost:8000', {
         query: {
           userId: user._id
         },

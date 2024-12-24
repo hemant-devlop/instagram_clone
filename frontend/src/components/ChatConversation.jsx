@@ -13,13 +13,12 @@ import { debounce } from 'lodash'
 const ChatConversation = () => {
     const dispatch = useDispatch();
     const [textMessage, setTextMessage] = useState("");
-    const [isLoading,setIsLoading]=useState(true);
     const { selectedUser, onlineUsers, messages } = useSelector(store => store.chat)
     const isOnline = onlineUsers.includes(selectedUser?._id);
 
     const debounceMessage = useCallback(debounce(async (receiverId,message) => {
         try {
-            const res = await axios.post(`https://instagram-clone-puy1.onrender.com/api/v1/message/send/${receiverId}`, { message }, {
+            const res = await axios.post(`http://localhost:8000/api/v1/message/send/${receiverId}`, { message }, {
                 headers: {
                     "Content-Type": "application/json"
                 },
